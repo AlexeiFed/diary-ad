@@ -170,7 +170,10 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: designTokens.borderRadius.lg,
     padding: designTokens.spacing.lg,
     boxShadow: designTokens.shadows.md,
-    border: `1px solid ${designTokens.colors.border}`
+    border: `1px solid ${designTokens.colors.border}`,
+    overflow: 'hidden',
+    position: 'relative',
+    boxSizing: 'border-box'
   },
   cardHeader: {
     marginBottom: designTokens.spacing.lg
@@ -182,14 +185,17 @@ const styles: Record<string, React.CSSProperties> = {
   },
   dayColumns: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: designTokens.spacing.md
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: designTokens.spacing.md,
+    width: '100%'
   },
   column: {
     display: 'flex',
     flexDirection: 'column',
     minHeight: 'auto',
-    overflow: 'visible'
+    overflow: 'hidden',
+    width: '100%',
+    boxSizing: 'border-box'
   },
   recordCard: {
     backgroundColor: designTokens.colors.surface,
@@ -198,7 +204,9 @@ const styles: Record<string, React.CSSProperties> = {
     border: `1px solid ${designTokens.colors.border}`,
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'visible'
+    overflow: 'hidden',
+    width: '100%',
+    boxSizing: 'border-box'
   },
   recordCardHeader: {
     display: 'flex',
@@ -267,10 +275,9 @@ const styles: Record<string, React.CSSProperties> = {
     width: 'fit-content'
   },
   recordAdditional: {
-    marginTop: designTokens.spacing.md,
     paddingTop: designTokens.spacing.md,
     borderTop: `1px solid ${designTokens.colors.border}`,
-    overflow: 'visible'
+    overflow: 'hidden'
   },
   pulse: {
     display: 'flex',
