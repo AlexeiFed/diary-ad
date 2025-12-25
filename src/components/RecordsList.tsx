@@ -6,6 +6,7 @@ import { designTokens } from '../lib/design-tokens';
 interface RecordsListProps {
   records: BloodPressureRecord[];
   onDelete: (id: string) => void;
+  sortOrder?: 'asc' | 'desc';
 }
 
 interface RecordsByDay {
@@ -72,7 +73,7 @@ const RecordCard = ({ record, onDelete }: { record: BloodPressureRecord; onDelet
   );
 };
 
-export const RecordsList = ({ records, onDelete }: RecordsListProps) => {
+export const RecordsList = ({ records, onDelete, sortOrder = 'desc' }: RecordsListProps) => {
   // Group records by date
   const recordsByDay: RecordsByDay = records.reduce((acc, record) => {
     const date = record.date;
@@ -83,9 +84,11 @@ export const RecordsList = ({ records, onDelete }: RecordsListProps) => {
     return acc;
   }, {} as RecordsByDay);
 
-  // Sort dates in descending order (newest first)
+  // Sort dates based on sortOrder
   const sortedDates = Object.keys(recordsByDay).sort((a, b) => {
-    return new Date(b).getTime() - new Date(a).getTime();
+    const timeA = new Date(a).getTime();
+    const timeB = new Date(b).getTime();
+    return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
   });
 
   if (records.length === 0) {
@@ -185,7 +188,8 @@ const styles: Record<string, React.CSSProperties> = {
   column: {
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '200px'
+    minHeight: 'auto',
+    overflow: 'visible'
   },
   recordCard: {
     backgroundColor: designTokens.colors.surface,
@@ -194,7 +198,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: `1px solid ${designTokens.colors.border}`,
     display: 'flex',
     flexDirection: 'column',
-    height: '100%'
+    overflow: 'visible'
   },
   recordCardHeader: {
     display: 'flex',
@@ -263,9 +267,10 @@ const styles: Record<string, React.CSSProperties> = {
     width: 'fit-content'
   },
   recordAdditional: {
-    marginTop: 'auto',
+    marginTop: designTokens.spacing.md,
     paddingTop: designTokens.spacing.md,
-    borderTop: `1px solid ${designTokens.colors.border}`
+    borderTop: `1px solid ${designTokens.colors.border}`,
+    overflow: 'visible'
   },
   pulse: {
     display: 'flex',

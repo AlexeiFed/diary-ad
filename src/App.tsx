@@ -4,13 +4,13 @@ import { RecordsList } from './components/RecordsList';
 import { Chart } from './components/Chart';
 import { getAllRecords, deleteRecord, BloodPressureRecord, initDB } from './lib/db';
 import { designTokens } from './lib/design-tokens';
-import { format } from 'date-fns';
 
 function App() {
   const [records, setRecords] = useState<BloodPressureRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'form' | 'history' | 'chart'>('form');
-  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     const loadRecords = async () => {
@@ -44,8 +44,10 @@ function App() {
     }
   };
 
-  // Filter records based on selected date (show all dates if not filtering)
-  const filteredRecords = selectedDate ? records : records;
+  // Filter records based on selected date
+  const filteredRecords = selectedDate
+    ? records.filter(record => record.date === selectedDate)
+    : records;
 
   if (isLoading) {
     return (
@@ -97,21 +99,44 @@ function App() {
         {activeTab === 'history' && (
           <>
             <div style={styles.filterContainer}>
-              <label style={styles.filterLabel}>Фильтр по дате:</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                style={styles.dateInput}
-              />
-              <button
-                onClick={() => setSelectedDate('')}
-                style={styles.clearButton}
-              >
-                Показать все
-              </button>
+              <div style={styles.filterRow}>
+                <label style={styles.filterLabel}>Фильтр по дате:</label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  style={styles.dateInput}
+                />
+                <button
+                  onClick={() => setSelectedDate('')}
+                  style={styles.clearButton}
+                >
+                  Показать все
+                </button>
+              </div>
+              <div style={styles.sortRow}>
+                <label style={styles.filterLabel}>Сортировка:</label>
+                <button
+                  onClick={() => setSortOrder('desc')}
+                  style={{
+                    ...styles.sortButton,
+                    ...(sortOrder === 'desc' ? styles.sortButtonActive : {})
+                  }}
+                >
+                  ↓ По убыванию
+                </button>
+                <button
+                  onClick={() => setSortOrder('asc')}
+                  style={{
+                    ...styles.sortButton,
+                    ...(sortOrder === 'asc' ? styles.sortButtonActive : {})
+                  }}
+                >
+                  ↑ По возрастанию
+                </button>
+              </div>
             </div>
-            <RecordsList records={filteredRecords} onDelete={handleDelete} />
+            <RecordsList records={filteredRecords} onDelete={handleDelete} sortOrder={sortOrder} />
           </>
         )}
         {activeTab === 'chart' && <Chart records={records} />}
@@ -184,17 +209,29 @@ const styles: Record<string, React.CSSProperties> = {
   },
   filterContainer: {
     display: 'flex',
-    gap: designTokens.spacing.md,
-    alignItems: 'center',
+    flexDirection: 'column',
+    gap: designTokens.spacing.sm,
     padding: `${designTokens.spacing.md} ${designTokens.spacing.md}`,
     backgroundColor: designTokens.colors.surface,
-    borderBottom: `1px solid ${designTokens.colors.border}`,
+    borderBottom: `1px solid ${designTokens.colors.border}`
+  },
+  filterRow: {
+    display: 'flex',
+    gap: designTokens.spacing.md,
+    alignItems: 'center',
+    flexWrap: 'wrap'
+  },
+  sortRow: {
+    display: 'flex',
+    gap: designTokens.spacing.sm,
+    alignItems: 'center',
     flexWrap: 'wrap'
   },
   filterLabel: {
     fontSize: designTokens.typography.fontSize.sm,
     fontWeight: designTokens.typography.fontWeight.medium,
-    color: designTokens.colors.text
+    color: designTokens.colors.text,
+    whiteSpace: 'nowrap'
   },
   dateInput: {
     padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
@@ -216,6 +253,22 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: designTokens.typography.fontWeight.medium,
     cursor: 'pointer',
     transition: 'all 0.2s ease'
+  },
+  sortButton: {
+    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+    borderRadius: designTokens.borderRadius.md,
+    backgroundColor: designTokens.colors.surfaceElevated,
+    color: designTokens.colors.textSecondary,
+    border: `1px solid ${designTokens.colors.border}`,
+    fontSize: designTokens.typography.fontSize.sm,
+    fontWeight: designTokens.typography.fontWeight.medium,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
+  },
+  sortButtonActive: {
+    backgroundColor: designTokens.colors.primary,
+    color: '#ffffff',
+    borderColor: designTokens.colors.primary
   }
 };
 
