@@ -195,7 +195,8 @@ const styles: Record<string, React.CSSProperties> = {
     minHeight: 'auto',
     overflow: 'hidden',
     width: '100%',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    flex: 1
   },
   recordCard: {
     backgroundColor: designTokens.colors.surface,
@@ -206,7 +207,8 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     overflow: 'hidden',
     width: '100%',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    flex: 1
   },
   recordCardHeader: {
     display: 'flex',
@@ -215,7 +217,7 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: designTokens.spacing.md
   },
   timeLabel: {
-    fontSize: designTokens.typography.fontSize.sm,
+    fontSize: designTokens.typography.fontSize.xs,
     fontWeight: designTokens.typography.fontWeight.medium,
     color: designTokens.colors.textSecondary
   },
@@ -243,7 +245,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     gap: designTokens.spacing.sm,
-    marginBottom: designTokens.spacing.md
+    marginBottom: designTokens.spacing.sm
   },
   pressureValue: {
     display: 'flex',
@@ -251,17 +253,17 @@ const styles: Record<string, React.CSSProperties> = {
     gap: designTokens.spacing.xs
   },
   pressureNumber: {
-    fontSize: designTokens.typography.fontSize['2xl'],
+    fontSize: designTokens.typography.fontSize.xl,
     fontWeight: designTokens.typography.fontWeight.bold,
     color: designTokens.colors.text
   },
   pressureSlash: {
-    fontSize: designTokens.typography.fontSize.lg,
+    fontSize: designTokens.typography.fontSize.base,
     color: designTokens.colors.textSecondary,
     margin: `0 ${designTokens.spacing.xs}`
   },
   pressureUnit: {
-    fontSize: designTokens.typography.fontSize.sm,
+    fontSize: designTokens.typography.fontSize.xs,
     color: designTokens.colors.textSecondary,
     marginLeft: designTokens.spacing.xs
   },
@@ -275,14 +277,17 @@ const styles: Record<string, React.CSSProperties> = {
     width: 'fit-content'
   },
   recordAdditional: {
-    paddingTop: designTokens.spacing.md,
+    paddingTop: designTokens.spacing.sm,
     borderTop: `1px solid ${designTokens.colors.border}`,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column'
   },
   pulse: {
     display: 'flex',
     gap: designTokens.spacing.sm,
-    marginBottom: designTokens.spacing.sm,
+    marginBottom: designTokens.spacing.xs,
     fontSize: designTokens.typography.fontSize.xs
   },
   pulseLabel: {
@@ -298,7 +303,12 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: designTokens.typography.fontSize.xs,
     color: designTokens.colors.textSecondary,
     fontStyle: 'italic',
-    lineHeight: 1.5
+    lineHeight: 1.4,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical'
   },
   emptyColumn: {
     display: 'flex',
