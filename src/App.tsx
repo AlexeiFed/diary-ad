@@ -4,11 +4,13 @@ import { RecordsList } from './components/RecordsList';
 import { Chart } from './components/Chart';
 import { getAllRecords, deleteRecord, BloodPressureRecord, initDB } from './lib/db';
 import { designTokens } from './lib/design-tokens';
+import { format } from 'date-fns';
 
 function App() {
   const [records, setRecords] = useState<BloodPressureRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'form' | 'history' | 'chart'>('form');
+  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
 
   useEffect(() => {
     const loadRecords = async () => {
@@ -41,6 +43,9 @@ function App() {
       console.error('Ошибка при удалении:', error);
     }
   };
+
+  // Filter records based on selected date (show all dates if not filtering)
+  const filteredRecords = selectedDate ? records : records;
 
   if (isLoading) {
     return (
@@ -89,7 +94,26 @@ function App() {
 
       <main style={styles.main}>
         {activeTab === 'form' && <BloodPressureForm onSuccess={handleRecordAdded} />}
-        {activeTab === 'history' && <RecordsList records={records} onDelete={handleDelete} />}
+        {activeTab === 'history' && (
+          <>
+            <div style={styles.filterContainer}>
+              <label style={styles.filterLabel}>Фильтр по дате:</label>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                style={styles.dateInput}
+              />
+              <button
+                onClick={() => setSelectedDate('')}
+                style={styles.clearButton}
+              >
+                Показать все
+              </button>
+            </div>
+            <RecordsList records={filteredRecords} onDelete={handleDelete} />
+          </>
+        )}
         {activeTab === 'chart' && <Chart records={records} />}
       </main>
     </div>
@@ -157,8 +181,44 @@ const styles: Record<string, React.CSSProperties> = {
     maxWidth: '600px',
     margin: '0 auto',
     width: '100%'
+  },
+  filterContainer: {
+    display: 'flex',
+    gap: designTokens.spacing.md,
+    alignItems: 'center',
+    padding: `${designTokens.spacing.md} ${designTokens.spacing.md}`,
+    backgroundColor: designTokens.colors.surface,
+    borderBottom: `1px solid ${designTokens.colors.border}`,
+    flexWrap: 'wrap'
+  },
+  filterLabel: {
+    fontSize: designTokens.typography.fontSize.sm,
+    fontWeight: designTokens.typography.fontWeight.medium,
+    color: designTokens.colors.text
+  },
+  dateInput: {
+    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+    borderRadius: designTokens.borderRadius.md,
+    border: `1px solid ${designTokens.colors.border}`,
+    fontSize: designTokens.typography.fontSize.sm,
+    fontFamily: designTokens.typography.fontFamily,
+    color: designTokens.colors.text,
+    backgroundColor: designTokens.colors.surfaceElevated,
+    cursor: 'pointer'
+  },
+  clearButton: {
+    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+    borderRadius: designTokens.borderRadius.md,
+    backgroundColor: designTokens.colors.surfaceElevated,
+    color: designTokens.colors.textSecondary,
+    border: `1px solid ${designTokens.colors.border}`,
+    fontSize: designTokens.typography.fontSize.sm,
+    fontWeight: designTokens.typography.fontWeight.medium,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease'
   }
 };
 
 export default App;
+
 

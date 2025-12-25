@@ -48,3 +48,4 @@ export default defineConfig({
 
 Vercel автоматически определит настройки и задеплоит приложение!
 
+

@@ -43,3 +43,4 @@ async function createIcon(size, filename) {
 await createIcon(192, 'pwa-192x192.png');
 await createIcon(512, 'pwa-512x512.png');
 
+
