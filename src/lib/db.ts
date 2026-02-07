@@ -123,4 +123,122 @@ export const deleteRecord = async (id: string): Promise<void> => {
   });
 };
 
+export const exportRecordsAsHTML = (records: BloodPressureRecord[]): string => {
+  const sortedRecords = [...records].sort((a, b) => b.timestamp - a.timestamp);
+  
+  const timeLabels: Record<string, string> = {
+    morning: 'Утро',
+    evening: 'Вечер'
+  };
+  
+  const rows = sortedRecords.map(record => {
+    const dateObj = new Date(record.date);
+    const formattedDate = dateObj.toLocaleDateString('ru-RU', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+    
+    return `
+      <tr>
+        <td>${formattedDate}</td>
+        <td>${timeLabels[record.time]}</td>
+        <td>${record.systolic}</td>
+        <td>${record.diastolic}</td>
+        <td>${record.pulse || '-'}</td>
+        <td>${record.notes || '-'}</td>
+      </tr>
+    `;
+  }).join('');
+  
+  return `
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экспорт данных - Дневник АД</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .info {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #4a90e2;
+      color: white;
+      font-weight: 600;
+    }
+    tr:hover {
+      background-color: #f8f9fa;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    @media print {
+      body {
+        background: white;
+      }
+      table {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Дневник артериального давления</h1>
+  <div class="info">
+    <p>Экспортировано: ${new Date().toLocaleDateString('ru-RU', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })}</p>
+    <p>Всего записей: ${records.length}</p>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Дата</th>
+        <th>Время суток</th>
+        <th>Систолическое (верхнее)</th>
+        <th>Диастолическое (нижнее)</th>
+        <th>Пульс</th>
+        <th>Примечания</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows}
+    </tbody>
+  </table>
+</body>
+</html>
+  `;
+};
+
 
